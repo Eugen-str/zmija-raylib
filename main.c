@@ -1,7 +1,5 @@
 #include <raylib.h>
 #include <stdlib.h>
-#include <stdint.h>
-#include <stdio.h>
 
 #define SIRINA 1000
 #define VISINA 750
@@ -97,35 +95,35 @@ void nacrtaj_zmiju(struct Zmija z, Vec2 jabuka){
     }
 }
 
-struct Zmija zmija_pomak(struct Zmija zmija, Smjer d, Vec2 jabuka){    
-    zmija.rep[0].x = zmija.glava.x;
-    zmija.rep[0].y = zmija.glava.y;
+void zmija_pomak(struct Zmija *zmija, Smjer d, Vec2 *jabuka){    
+    zmija->rep[0].x = zmija->glava.x;
+    zmija->rep[0].y = zmija->glava.y;
     
-    for(int i = zmija.duljina - 1; i > 0; i--){
-        zmija.rep[i].x = zmija.rep[i-1].x;
-        zmija.rep[i].y = zmija.rep[i-1].y;
+    for(int i = zmija->duljina - 1; i > 0; i--){
+        zmija->rep[i].x = zmija->rep[i-1].x;
+        zmija->rep[i].y = zmija->rep[i-1].y;
     }
     
     switch (d)
     {
         case Lijevo:
-            zmija.glava.x-=1;
+            zmija->glava.x-=1;
             break;
         case Desno:
-            zmija.glava.x+=1;
+            zmija->glava.x+=1;
             break;
         case Gore:
-            zmija.glava.y-=1;
+            zmija->glava.y-=1;
             break;
         case Dolje:
-            zmija.glava.y+=1;
+            zmija->glava.y+=1;
             break;
     }
 
-    if(zmija.glava.x == jabuka.x && zmija.glava.y == jabuka.y){
-        zmija.duljina ++;
+    if(zmija->glava.x == jabuka->x && zmija->glava.y == jabuka->y){
+        zmija->duljina ++;
+        *jabuka = gen_jabuka(*zmija);
     }
-    return zmija;
 }
 
 bool provjeri_smrt(struct Zmija z){
@@ -167,12 +165,7 @@ int main(){
         br_frame++;
 
         if(br_frame/20 == 1 && !mrtva){
-            zmija = zmija_pomak(zmija, dir, jabuka);
-
-            if(zmija.glava.x == jabuka.x && zmija.glava.y == jabuka.y){
-                jabuka = gen_jabuka(zmija);
-            }
-
+            zmija_pomak(&zmija, dir, &jabuka);
             mrtva = provjeri_smrt(zmija);
 
             br_frame = 0;
